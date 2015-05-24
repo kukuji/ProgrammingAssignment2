@@ -3,41 +3,38 @@
 
 ## Write a short comment describing this function
 
+
 #This function creates a special "matrix" object that can cache its inverse
 makeCacheMatrix <- function(x = matrix()) {
-  m <- NULL  # init the defautl value of m to NULL
-  y <- NULL # init the defautl value of y to NULL
-  
-  #set the value of the matrix
-  setmatrix <- function(y) { 
-    x <<- y 
-    m <<- NULL 
+  inverse <- NULL
+  set <- function(x) {
+    mtx <<- x;
+    inverse <<- NULL;
   }
-  
-  list(setmatrix = setmatrix, getmatrix = getmatrix, 
-       setinverse = setinverse,
-       getinverse = getinverse)
+  get <- function() return(mtx);
+  setinv <- function(inv) inverse <<- inv;
+  getinv <- function() return(inverse);
+  return(list(set = set, get = get, setinv = setinv, getinv = getinv))
 }
 
 
-## Write a short comment describing this function
+## This function computes the inverse of the special
+## "matrix" returned by `makeCacheMatrix` above. If the inverse has
+## already been calculated (and the matrix has not changed), then
+## `cacheSolve` should retrieve the inverse from the cache.
 
 cacheSolve <- function(x, ...) {
-        ## Return a matrix that is the inverse of 'x'
   
+  inverse <- mtx$getinv()
+  # if the data already exists (cached), then return the cached data
+  if(!is.null(inverse)) {  
+    message("Will get cached data")
+    return(inverse)
+  }
   
-  m <- x$getinverse() # if an inverse has already been calculated it's assigned to m
-  if(!is.null(m)){ 
-    if(x$setmatrix() == x$getmatrix()) { # if the matrix is equall to cached matrix then return the cached one
-      
-      return(m)
-    }
-    
-    #if it's not cached 
-    y <- x$getmatrix() 
-    x$setmatrix(y)  # here we cache the matrix 
-    m <- solve(y, ...) 
-    x$setinverse(m)
-    
-    m # return the inverse
+  #otherwise set the data 
+  data <- mtx$get()
+  invserse <- solve(data, ...)
+  mtx$setinv(inverse)
+  return(inverse)
 }
